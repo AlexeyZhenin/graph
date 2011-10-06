@@ -6,7 +6,7 @@
 #include <queue>
 using namespace std;
 
-typedef int Vertex; //
+typedef int Vertex; //сваавы
 
 typedef	map <Vertex, map <Vertex, int> > Graph_data;
 
