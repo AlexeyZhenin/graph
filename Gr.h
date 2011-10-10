@@ -6,7 +6,9 @@
 #include <queue>
 using namespace std;
 
-typedef int Vertex; //сваавы
+const int INF = 100000000; // бесконечность
+
+typedef int Vertex;
 
 typedef	map <Vertex, map <Vertex, int> > Graph_data;
 
@@ -26,23 +28,23 @@ struct DFSCallBack
 
 /*struct DCU
 {
-	vector <Vertex> parent;
-	void Set (Vertex val){
-		parent[val] = val;
-	}
+vector <Vertex> parent;
+void Set (Vertex val){
+parent[val] = val;
+}
 
-	Vertex Find (Vertex v) {
-		if (v == parent[v])
-			return v;
-		return Find (parent[v]);
-	}
+Vertex Find (Vertex v) {
+if (v == parent[v])
+return v;
+return Find (parent[v]);
+}
 
-	void UnionSets (Vertex v1, Vertex v2) {
-		v1 = Find (v1);
-		v2 = Find (v2);
-		if (v1 != v2)
-			parent[v2] = v1;
-	}
+void UnionSets (Vertex v1, Vertex v2) {
+v1 = Find (v1);
+v2 = Find (v2);
+if (v1 != v2)
+parent[v2] = v1;
+}
 };*/
 
 class Graph{
@@ -68,11 +70,11 @@ public:
 			map <Vertex, int> &adjList = the_iterator->second;
 			adjList.insert(make_pair(vertex2,weight));
 		}
-	
+
 		/*{
-			map <Vertex, map <Vertex, int> >::iterator the_iterator = data.find(vertex2);
-			map <Vertex, int> &adjList = the_iterator->second;
-			adjList.insert(make_pair(vertex1,weight));
+		map <Vertex, map <Vertex, int> >::iterator the_iterator = data.find(vertex2);
+		map <Vertex, int> &adjList = the_iterator->second;
+		adjList.insert(make_pair(vertex1,weight));
 		}*/
 		//для ориентированного грава
 	}
@@ -105,9 +107,9 @@ public:
 		}
 		//delete second
 		/*{
-			map <Vertex, map <Vertex, int> >::iterator the_iterator = data.find(vertex2);
-			map <Vertex, int> &adjList = the_iterator->second;
-			adjList.erase(vertex1);
+		map <Vertex, map <Vertex, int> >::iterator the_iterator = data.find(vertex2);
+		map <Vertex, int> &adjList = the_iterator->second;
+		adjList.erase(vertex1);
 		}*/
 		//для неориентированного графа
 	}
@@ -200,9 +202,76 @@ public:
 	}
 
 	void Prim (){
+		int n = data.size();
+		vector <int> min;
+		for (int i = 0; i < n; ++i){
+			min[i] = INF;
+		}
+		//вес наимменьшего допустимого ребра
+		vector <Vertex> sel;
+		//храниц конец этого наименьшего ребра
+		for (int i = 0; i < n; ++i){
+			sel[i] = -1;
+		}
+		min[0] = 0;
+		set < pair <Vertex,int>> q;
+		//очередь из всех вершин в порядке увеличения их min
+		q.insert(make_pair (0,0));	
+		for (map <Vertex, map <Vertex, int> >::iterator the_iterator = data.begin();the_iterator != data.end(); ++the_iterator){
+			if(q.empty()){
+				cout<<"No MST";
+			}
+			Vertex v = q.begin()->second;
+			q.erase(q.begin());
+			if (sel[v] != -1){
+				cout<< v << " " << sel[v] << endl;
+			}
+			map <Vertex, int> &adjList = the_iterator->second;
+			for (map<Vertex, int>::iterator iter = adjList.begin();iter != adjList.end(); ++iter){
+				int t = iter->second;
+				Vertex cost = iter->first;
+				if (cost < min[t]) {
+					q.erase (make_pair (min[t], t));
+					min[t] = cost;
+					sel[t] = v;
+					q.insert(make_pair (min[t], t));
+				}
+			}
+		}
+	}
 
+	void Dijkstr(Vertex s){
+		vector<int> d;
+		//distances
+		for (int i = 0; i < data.size(); ++i){
+			d[i] = INF;
+		}
+		vector <bool> u;
+		vector <int> p;
+		//parents
+		d[s] = 0;
+		for (map <Vertex, map <Vertex, int> >::iterator the_iterator = data.begin();the_iterator != data.end(); ++the_iterator){
+			Vertex v = -1;
+			for (map <Vertex, map <Vertex, int> >::iterator the_iterator1 = data.begin();the_iterator1 != data.end(); ++the_iterator1){
+				if(!u[the_iterator1->first] && ((v == -1)||(d[the_iterator1->first] < d[the_iterator->first])))
+					v = the_iterator1->first;
+				if (d[v] = INF)
+					break;
+				u[v] = true;
+			}
+			map <Vertex, int> &adjList = the_iterator->second;
+			for (map<Vertex, int>::iterator iter = adjList.begin();iter != adjList.end(); ++iter){
+				Vertex t = iter->first;
+				int l = iter->second;
+				if((d[v] + l)<d[t]){
+					d[t] = d[v] + l;
+					p[t] = v;
+				}
+			}
+		}
 	}
 };
+		
 
 void Strongly_Connected_Components (Graph g)
 {
