@@ -6,9 +6,13 @@
 #include <queue>
 using namespace std;
 
+<<<<<<< HEAD
 const int INF = 100000000; // бесконечность
 
 typedef int Vertex;
+=======
+typedef int Vertex; //
+>>>>>>> 12258963a688f20d4bda310f423a104917731c1d
 
 typedef	map <Vertex, map <Vertex, int> > Graph_data;
 
