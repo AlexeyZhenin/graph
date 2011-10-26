@@ -1,4 +1,4 @@
-#include <iostream>
+п»ї#include <iostream>
 #include <string>
 #include <map>
 #include <set>
@@ -6,7 +6,7 @@
 #include <queue>
 using namespace std;
 
-const int INF = 100000000; // бесконечность
+const int INF = 100000000; // Р±РµСЃРєРѕРЅРµС‡РЅРѕСЃС‚СЊ
 
 typedef int Vertex;
 
@@ -26,43 +26,31 @@ struct DFSCallBack
 	}
 };
 
-/*struct DCU
-{
-vector <Vertex> parent;
-void Set (Vertex val){
-parent[val] = val;
-}
-
-Vertex Find (Vertex v) {
-if (v == parent[v])
-return v;
-return Find (parent[v]);
-}
-
-void UnionSets (Vertex v1, Vertex v2) {
-v1 = Find (v1);
-v2 = Find (v2);
-if (v1 != v2)
-parent[v2] = v1;
-}
-};*/
-
 class Graph{
 public:
 	vector <int> color;
 	//0 - not visited 1 - processed 2 - visited
 	Graph_data data;
-	void AddV (Vertex point) {
+	void AddV (Vertex &point) {
 		map <Vertex, map <Vertex, int> >::iterator the_iterator;
 		if (data.find(point) == data.end()){
 			map <Vertex, int> _p;
 			data.insert (make_pair (point, _p));
 		}
-		else{
-			cout << "Vertex was added earlier";
+	}
+	void PrintGr(){
+		map <Vertex, map <Vertex, int> >::iterator the_iterator;
+		for (map <Vertex, map <Vertex, int> >::iterator the_iterator = data.begin();the_iterator != data.end(); ++the_iterator){
+			Vertex v = the_iterator->first;
+			map <Vertex, int> &adjList = the_iterator->second;
+		    for (map <Vertex, int>::iterator iter = adjList.begin();iter != adjList.end(); ++iter){
+				Vertex v1 = iter->first;
+				cout << v << "->" << v1<< endl;
+		}
 		}
 	}
-	void AddEdge(const Vertex &vertex1,  const Vertex &vertex2, int weight){
+
+	void AddEdge(Vertex &vertex1, Vertex &vertex2, int weight){
 		AddV(vertex1);
 		AddV(vertex2);
 		{
@@ -71,16 +59,11 @@ public:
 			adjList.insert(make_pair(vertex2,weight));
 		}
 
-		/*{
-		map <Vertex, map <Vertex, int> >::iterator the_iterator = data.find(vertex2);
-		map <Vertex, int> &adjList = the_iterator->second;
-		adjList.insert(make_pair(vertex1,weight));
-		}*/
-		//для ориентированного грава
 	}
-	void DelVertex(const Vertex &vertex1){
+	
+	void DelVertex(Vertex &vertex1){
 		if (data.find(vertex1) == data.end()){
-			cout << "Vertex wasn't found";
+			cout << "Vertex wasn't found" << endl;
 		}
 		else {
 			map <Vertex, map <Vertex, int> >::iterator the_iterator;
@@ -98,23 +81,21 @@ public:
 		}
 	}
 
-	void DelEdge (const Vertex &vertex1,  const Vertex &vertex2)
+	void DelEdge (Vertex &vertex1, Vertex &vertex2)
 	{
-		{
+		if ((data.find(vertex1) == data.end())||(data.find(vertex2) == data.end())){
+			cout << "Vertex wasn't found" << endl;
+		}
+		else{
 			map <Vertex, map <Vertex, int> >::iterator the_iterator = data.find(vertex1);
 			map <Vertex, int> &adjList = the_iterator->second;
 			adjList.erase(vertex2);
 		}
-		//delete second
-		/*{
-		map <Vertex, map <Vertex, int> >::iterator the_iterator = data.find(vertex2);
-		map <Vertex, int> &adjList = the_iterator->second;
-		adjList.erase(vertex1);
-		}*/
-		//для неориентированного графа
+		
 	}
 
-	template <typename Cb> 
+	
+template <typename Cb> 
 	void DFS_iter (const Vertex &vertex1, Cb &cb){
 		int n = data.size();
 		color[vertex1] = 1;
@@ -207,15 +188,12 @@ public:
 		for (int i = 0; i < n; ++i){
 			min[i] = INF;
 		}
-		//вес наимменьшего допустимого ребра
 		vector <Vertex> sel;
-		//храниц конец этого наименьшего ребра
 		for (int i = 0; i < n; ++i){
 			sel[i] = -1;
 		}
 		min[0] = 0;
-		set < pair <Vertex,int>> q;
-		//очередь из всех вершин в порядке увеличения их min
+		multimap <int, Vertex> q;
 		q.insert(make_pair (0,0));	
 		for (map <Vertex, map <Vertex, int> >::iterator the_iterator = data.begin();the_iterator != data.end(); ++the_iterator){
 			if(q.empty()){
@@ -228,13 +206,13 @@ public:
 			}
 			map <Vertex, int> &adjList = the_iterator->second;
 			for (map<Vertex, int>::iterator iter = adjList.begin();iter != adjList.end(); ++iter){
-				int t = iter->second;
-				Vertex cost = iter->first;
+				Vertex t = iter->second;
+				int cost = iter->first;
 				if (cost < min[t]) {
-					q.erase (make_pair (min[t], t));
+					q.erase (min[t]);
 					min[t] = cost;
 					sel[t] = v;
-					q.insert(make_pair (min[t], t));
+					q.insert(min[t]);
 				}
 			}
 		}
@@ -271,7 +249,7 @@ public:
 		}
 	}
 };
-		
+
 
 void Strongly_Connected_Components (Graph g)
 {
@@ -281,7 +259,7 @@ void Strongly_Connected_Components (Graph g)
 	for (map <Vertex, map <Vertex, int> >::iterator the_iterator = g.data.begin();the_iterator != g.data.end();++the_iterator){
 		map <Vertex, int> &adjList = the_iterator->second;
 		for (map <Vertex, int>::iterator iter = adjList.begin();iter != adjList.end(); ++iter){
-			gr.AddEdge(iter -> first, the_iterator -> first, 1);
+			gr.AddEdge(iter->first, the_iterator->first, 1);
 		}
 
 	}
